@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Harshu 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #0d0118;
+    font-family: 'Lato', sans-serif;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Fullscreen prompt overlay */
+  #fsPrompt {
+    position: fixed; inset: 0; z-index: 99999;
+    background: #0d0118;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+    text-align: center;
+    padding: 32px;
+  }
+  #fsPrompt .fs-emoji { font-size: 60px; animation: bounce 1.5s ease-in-out infinite; }
+  #fsPrompt h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    color: #fff;
+    text-shadow: 0 0 30px rgba(255,130,180,0.5);
+  }
+  #fsPrompt p {
+    color: rgba(255,200,220,0.75);
+    font-size: 1rem;
+    font-weight: 300;
+    max-width: 360px;
+    line-height: 1.7;
+  }
+  #fsEnterBtn {
+    background: linear-gradient(135deg, #ff4d8d, #ff2d6b);
+    color: white;
+    border: none;
+    padding: 18px 56px;
+    border-radius: 50px;
+    font-size: 1.15rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    box-shadow: 0 8px 40px rgba(255,60,120,0.5);
+    animation: glowPulse 1.5s ease-in-out infinite;
+  }
+
+  /* Escape blocker overlay */
+  #escapeBlocker {
+    display: none;
+    position: fixed; inset: 0; z-index: 99998;
+    background: rgba(13,1,24,0.97);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+    padding: 32px;
+  }
+  #escapeBlocker.active { display: flex; }
+  #escapeBlocker .esc-emoji { font-size: 56px; animation: shake 0.5s ease-in-out 3; }
+  #escapeBlocker h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: #fff;
+    text-shadow: 0 0 30px rgba(255,100,160,0.6);
+    line-height: 1.4;
+  }
+  #escapeBlocker p {
+    color: rgba(255,200,220,0.8);
+    font-size: 1rem;
+    font-weight: 300;
+    max-width: 380px;
+    line-height: 1.7;
+  }
+  #escapeBlocker .btn-back {
+    background: linear-gradient(135deg, #ff4d8d, #ff2d6b);
+    color: white;
+    border: none;
+    padding: 16px 48px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-family: 'Lato', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(255,60,120,0.5);
+    animation: glowPulse 1.5s ease-in-out infinite;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+  }
+
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--d, 3s) ease-in-out infinite;
+    opacity: var(--o, 0.6);
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--o, 0.6); transform: scale(1); }
+    50% { opacity: 0.1; transform: scale(0.5); }
+  }
+
+  .heart-float {
+    position: fixed;
+    font-size: var(--fs, 20px);
+    animation: floatUp var(--dur, 6s) ease-in infinite;
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.4; }
+    100% { transform: translateY(-10vh) rotate(20deg); opacity: 0; }
+  }
+
+  .card {
+    position: relative; z-index: 10;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,180,200,0.2);
+    border-radius: 32px;
+    padding: 60px 56px;
+    max-width: 560px;
+    width: 90%;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 80px rgba(255,80,140,0.15), 0 0 200px rgba(200,0,100,0.1);
+    animation: cardIn 1.2s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .emoji-top {
+    font-size: 56px;
+    display: block;
+    margin-bottom: 20px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3rem);
+    color: #fff;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(255,130,180,0.5);
+  }
+
+  .subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: rgba(255,200,220,0.75);
+    margin-bottom: 32px;
+  }
+
+  .divider {
+    width: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,130,180,0.6), transparent);
+    margin: 0 auto 32px;
+  }
+
+  .message {
+    font-size: 1rem;
+    color: rgba(255,230,240,0.8);
+    line-height: 1.8;
+    margin-bottom: 40px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  .question-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 28px;
+    text-shadow: 0 0 20px rgba(255,100,160,0.4);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .btn-yes, .btn-no-styled {
+    background: linear-gradient(135deg, #ff4d8d, #ff2d6b);
+    color: white;
+    border: none;
+    padding: 16px 44px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 8px 32px rgba(255,60,120,0.4);
+    position: relative;
+    z-index: 20;
+    white-space: nowrap;
+  }
+  .btn-yes:hover {
+    transform: scale(1.07);
+    box-shadow: 0 12px 40px rgba(255,60,120,0.55);
+  }
+  .btn-yes:active { transform: scale(0.97); }
+
+  .btn-no-float {
+    background: linear-gradient(135deg, #ff4d8d, #ff2d6b);
+    color: white;
+    border: none;
+    padding: 16px 44px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    box-shadow: 0 8px 32px rgba(255,60,120,0.4);
+    position: fixed;
+    z-index: 200;
+    white-space: nowrap;
+    transition: box-shadow 0.15s;
+  }
+
+  .freeze-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(13,1,24,0.93);
+    backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .freeze-overlay.active { display: flex; }
+
+  .freeze-msg {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 4vw, 1.9rem);
+    color: #fff;
+    text-align: center;
+    max-width: 440px;
+    padding: 0 24px;
+    margin-bottom: 32px;
+    text-shadow: 0 0 30px rgba(255,100,160,0.6);
+    line-height: 1.6;
+  }
+
+  .freeze-hearts {
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+
+  .btn-yes-big {
+    background: linear-gradient(135deg, #ff4d8d, #ff2d6b);
+    color: white;
+    border: none;
+    padding: 18px 60px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-family: 'Lato', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 8px 40px rgba(255,60,120,0.5);
+    animation: glowPulse 1.5s ease-in-out infinite;
+    letter-spacing: 0.08em;
+  }
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 8px 32px rgba(255,60,120,0.5); transform: scale(1); }
+    50% { box-shadow: 0 12px 60px rgba(255,60,120,0.8); transform: scale(1.04); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+  }
+
+  .yes-screen {
+    display: none;
+    position: fixed; inset: 0; z-index: 10000;
+    background: #0d0118;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 32px;
+    animation: fadeIn 0.6s ease both;
+  }
+  .yes-screen.active { display: flex; }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .yes-screen h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    color: #fff;
+    margin: 24px 0 16px;
+    text-shadow: 0 0 40px rgba(255,100,160,0.6);
+  }
+  .yes-screen p {
+    color: rgba(255,200,220,0.8);
+    font-size: 1.1rem;
+    font-weight: 300;
+    max-width: 380px;
+    line-height: 1.7;
+  }
+
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 10001; }
+</style>
+</head>
+<body>
+
+<!-- Fullscreen entry prompt -->
+<div id="fsPrompt">
+  <div class="fs-emoji">🎂</div>
+  <h2>A Special Surprise for Harshu 💕</h2>
+  <p>Tap below to open your birthday surprise in full screen — it's going to be magical! ✨</p>
+  <button id="fsEnterBtn" onclick="enterFullscreen()">Open Surprise 🌸</button>
+</div>
+
+<!-- Escape blocker (shown when fullscreen is exited without Yes) -->
+<div id="escapeBlocker">
+  <div class="esc-emoji" id="escEmoji">🥺</div>
+  <h2>Harshu, come back! 💔</h2>
+  <p>You can't leave without answering first! Click below to go back and give your answer 😤</p>
+  <button class="btn-back" onclick="reEnterFullscreen()">Go Back 💖</button>
+</div>
+
+<div class="stars" id="stars"></div>
+<div id="hearts-container"></div>
+
+<!-- Main card -->
+<div class="card" id="mainCard">
+  <span class="emoji-top">🎂</span>
+  <h1>Happy Birthday,<br>Harshu 💕</h1>
+  <p class="subtitle">You deserve all the magic in the world</p>
+  <div class="divider"></div>
+  <p class="message">
+    On your special day, I just want you to know how incredibly 
+    grateful I am to have you in my life. You are my sunshine,
+    my peace, my favorite person in the whole world. 🌸
+  </p>
+  <p class="question-label">Will you be my friend? 🥺</p>
+  <div class="btn-row">
+    <button class="btn-yes" onclick="handleYes()">Yes 💖</button>
+    <button class="btn-no-styled" id="noBtn"
+      onmouseenter="runAway()"
+      ontouchstart="handleNoTouch(event)">No 🙂</button>
+  </div>
+</div>
+
+<!-- Freeze overlay -->
+<div class="freeze-overlay" id="freezeOverlay">
+  <div class="freeze-hearts">💔</div>
+  <p class="freeze-msg">
+    Harshu, you can't say no! 😤<br>
+    Click <strong style="color:#ffb3d1">Yes</strong> to continue...
+  </p>
+  <button class="btn-yes-big" onclick="handleYes()">Okay fine... Yes 💖</button>
+</div>
+
+<!-- Yes success screen -->
+<div class="yes-screen" id="yesScreen">
+  <canvas id="confetti"></canvas>
+  <div style="position:relative;z-index:10002;text-align:center;">
+    <div style="font-size:64px;animation:bounce 1s infinite">🥰</div>
+    <h2>I knew it, Harshu! 💗</h2>
+    <p>You are the most wonderful person I know.<br>Wishing you the most beautiful birthday ever! 🎉🌸</p>
+    <div style="margin-top:32px;font-size:2rem;animation:pulse 1s infinite">🎂🎈🎀🌸💕</div>
+  </div>
+</div>
+
+<script>
+  let yesClicked = false;
+  let fullscreenActive = false;
+
+  // ── Fullscreen helpers ──────────────────────────────────────────────────────
+  function enterFullscreen() {
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (req) {
+      req.call(el).then(() => {
+        fullscreenActive = true;
+        document.getElementById('fsPrompt').style.display = 'none';
+        lockOrientation();
+      }).catch(() => {
+        // Fullscreen denied — just hide the prompt anyway
+        document.getElementById('fsPrompt').style.display = 'none';
+      });
+    } else {
+      document.getElementById('fsPrompt').style.display = 'none';
+    }
+  }
+
+  function reEnterFullscreen() {
+    document.getElementById('escapeBlocker').classList.remove('active');
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (req) req.call(el).catch(() => {});
+  }
+
+  function lockOrientation() {
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('portrait').catch(() => {});
+    }
+  }
+
+  // ── Detect fullscreen exit ──────────────────────────────────────────────────
+  function onFsChange() {
+    const isFs = !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+    if (!isFs && fullscreenActive && !yesClicked) {
+      // User exited fullscreen — show blocker
+      document.getElementById('escapeBlocker').classList.add('active');
+      // Shake the emoji
+      const em = document.getElementById('escEmoji');
+      em.style.animation = 'none';
+      void em.offsetWidth;
+      em.style.animation = 'shake 0.5s ease-in-out';
+    }
+    if (isFs) {
+      document.getElementById('escapeBlocker').classList.remove('active');
+      fullscreenActive = true;
+    }
+  }
+
+  document.addEventListener('fullscreenchange', onFsChange);
+  document.addEventListener('webkitfullscreenchange', onFsChange);
+  document.addEventListener('mozfullscreenchange', onFsChange);
+  document.addEventListener('MSFullscreenChange', onFsChange);
+
+  // ── Block keyboard escape routes ────────────────────────────────────────────
+  document.addEventListener('keydown', function(e) {
+    if (yesClicked) return;
+    // Block Escape, F5, Ctrl+W/R/T/N, Alt+F4, Backspace navigation
+    if (
+      e.key === 'Escape' ||
+      e.key === 'F5' ||
+      (e.ctrlKey && ['w','W','t','T','n','N','r','R'].includes(e.key)) ||
+      (e.altKey && e.key === 'F4') ||
+      (e.key === 'Backspace' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA')
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // If Escape was pressed while in fullscreen — show blocker
+      if (e.key === 'Escape') {
+        setTimeout(() => {
+          if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            document.getElementById('escapeBlocker').classList.add('active');
+          }
+        }, 100);
+      }
+    }
+  }, true);
+
+  // Block right-click
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Block beforeunload
+  window.addEventListener('beforeunload', function(e) {
+    if (!yesClicked) {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    }
+  });
+
+  // ── Stars ───────────────────────────────────────────────────────────────────
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--o:${0.3+Math.random()*0.7};animation-delay:${Math.random()*4}s;width:${Math.random()<0.3?3:1.5}px;height:${Math.random()<0.3?3:1.5}px;`;
+    starsEl.appendChild(s);
+  }
+
+  // ── Floating hearts ─────────────────────────────────────────────────────────
+  const hc = document.getElementById('hearts-container');
+  const heartEmojis = ['💕','💗','💖','🌸','✨','💝','💓'];
+  function spawnHeart() {
+    const h = document.createElement('div');
+    h.className = 'heart-float';
+    const dur = 5 + Math.random() * 7;
+    h.style.cssText = `left:${Math.random()*100}%;--dur:${dur}s;--fs:${14+Math.random()*20}px;animation-delay:${Math.random()*3}s;`;
+    h.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+    hc.appendChild(h);
+    setTimeout(() => h.remove(), (dur + 3) * 1000);
+  }
+  for (let i = 0; i < 12; i++) setTimeout(spawnHeart, i * 600);
+  setInterval(spawnHeart, 1500);
+
+  // ── No button run away ──────────────────────────────────────────────────────
+  let noMoveCount = 0;
+  let noIsFloating = false;
+
+  function runAway() {
+    const btn = document.getElementById('noBtn');
+    if (!noIsFloating) {
+      noIsFloating = true;
+      const rect = btn.getBoundingClientRect();
+      btn.className = 'btn-no-float';
+      btn.style.left = rect.left + 'px';
+      btn.style.top = rect.top + 'px';
+      document.body.appendChild(btn);
+    }
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const bw = btn.offsetWidth || 140, bh = btn.offsetHeight || 52;
+    const nx = 10 + Math.random() * (vw - bw - 20);
+    const ny = 10 + Math.random() * (vh - bh - 20);
+    btn.style.left = nx + 'px';
+    btn.style.top = ny + 'px';
+    noMoveCount++;
+    if (noMoveCount >= 5) {
+      document.getElementById('freezeOverlay').classList.add('active');
+    }
+  }
+
+  function handleNoTouch(e) {
+    e.preventDefault();
+    runAway();
+  }
+
+  // ── Yes handler ─────────────────────────────────────────────────────────────
+  function handleYes() {
+    yesClicked = true;
+    document.getElementById('freezeOverlay').classList.remove('active');
+    document.getElementById('escapeBlocker').classList.remove('active');
+    document.getElementById('yesScreen').classList.add('active');
+    window.onbeforeunload = null;
+    startConfetti();
+    for (let i = 0; i < 8; i++) setTimeout(spawnHeart, i * 150);
+    // Exit fullscreen gracefully after Yes
+    setTimeout(() => {
+      if (document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }, 3000);
+  }
+
+  // ── Confetti ─────────────────────────────────────────────────────────────────
+  function startConfetti() {
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const colors = ['#ff4d8d','#ff9dba','#ffd1e3','#c084fc','#f472b6','#fb923c','#fbbf24','#a3e635'];
+    const pieces = [];
+    for (let i = 0; i < 220; i++) {
+      pieces.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        w: 6 + Math.random() * 10, h: 8 + Math.random() * 14,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.15,
+        vy: 2 + Math.random() * 4,
+        vx: (Math.random() - 0.5) * 2,
+        opacity: 0.8 + Math.random() * 0.2,
+      });
+    }
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+        p.y += p.vy; p.x += p.vx; p.rotation += p.rotSpeed;
+        if (p.y > canvas.height) { p.y = -20; p.x = Math.random() * canvas.width; }
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+</script>
+</body>
+</html>
